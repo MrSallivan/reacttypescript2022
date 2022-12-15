@@ -5,12 +5,13 @@ import {products} from './data/products'
 function App() {
 	return (
 		<div className='container mx-auto max-w-2xl pt-5'>
-			Hello
-			<Product product={product[0]}/>
+		
+			<Product product={products[0]}/>
+			<Product product={products[1]}/>
 			
 		</div>
 	)
-}
+} 
 
 
 export default App;

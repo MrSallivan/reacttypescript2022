@@ -1,52 +1,60 @@
+import React, {useState} from 'react'
+import {IProduct} from '../models'
 import axios from 'axios'
-import React, { useState } from 'react'
-import { IProduct } from '../models'
-import { ErrorMessage } from './ErrorMessage';
+import {ErrorMessage} from './ErrorMessage'
 
-const productData: IProduct = {
-	title: 'test product',
-	price: 13.5,
-	description: 'lorem ipsum set',
-	image: 'https://i.pravatar.cc',
-	category: 'electronic',
-	rating: {
-		rate: 3.9,
-		count: 120
-	}
+const productData: IProduct =  {
+  title: '',
+  price: 13.5,
+  description: 'lorem ipsum set',
+  image: 'https://i.pravatar.cc',
+  category: 'electronic',
+  rating: {
+    rate: 42,
+    count: 10
+  }
 }
 
-export function CreateProduct() {
-	const [value, setValue] = useState('')
-	const [error, setError] = useState('')
+interface CreateProductProps {
+  onCreate: (product: IProduct) => void
+}
 
-	const submitHandler = async (event: React.FormEvent) => {
-		event.preventDefault()
+export function CreateProduct({ onCreate }: CreateProductProps) {
+  const [value, setValue] = useState('')
+  const [error, setError] = useState('')
 
-		if (value.trim().length === 0) {
-			setError('Please enter valid title.')
-			return
-		}
+  const submitHandler = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setError('')
 
-		productData.title = value
+    if (value.trim().length === 0) {
+      setError('Please enter valid title.')
+      return
+    }
 
-		const response = await axios.post<IProduct>('https://fakestoreapi.com/products', productData)
-	}
+    productData.title = value
+    const response = await axios.post<IProduct>('https://fakestoreapi.com/products', productData)
 
-	const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setValue(event.target.value)
-	}
+    onCreate(response.data)
+  }
 
-	return (
-		<form onSubmit={submitHandler}>
-			<input type="text"
-				className='border py-2 px-4 mb-2 w-full outline-0'
-				placeholder='Enter product title...'
-				value={value}
-				onChange={changeHandler}
-			/>
-			{error && <ErrorMessage error={error} />}
+  const changeHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    setValue(event.target.value)
+  }
 
-			<button className='py-2 px-4 border bg-yellow-400 hover:text-white' type='submit'>Create</button>
-		</form>
-	)
+  return (
+    <form onSubmit={submitHandler}>
+      <input
+        type="text"
+        className="border py-2 px-4 mb-2 w-full outline-0"
+        placeholder="Enter product title..."
+        value={value}
+        onChange={changeHandler}
+      />
+
+      {error && <ErrorMessage error={error} />}
+
+      <button type="submit" className="py-2 px-4 border bg-yellow-400 hover:text-white">Create</button>
+    </form>
+  )
 }
